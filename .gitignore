@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Vivado / simulink
+vivado*.jou
+vivado*.log
+vivado*.str
+*.slx.autosave
