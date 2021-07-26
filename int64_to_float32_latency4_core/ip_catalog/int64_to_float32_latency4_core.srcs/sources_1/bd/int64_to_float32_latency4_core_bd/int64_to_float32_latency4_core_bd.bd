@@ -1,0 +1,90 @@
+{
+  "design": {
+    "design_info": {
+      "boundary_crc": "0xC2C8E37F63FB903",
+      "design_src": "SYSGEN",
+      "device": "xc7k160tffg676-2",
+      "name": "int64_to_float32_latency4_core_bd",
+      "synth_flow_mode": "Hierarchical",
+      "tool_version": "2019.1.3",
+      "validated": "true"
+    },
+    "design_tree": {
+      "int64_to_float32_latency4_core_1": ""
+    },
+    "ports": {
+      "clk": {
+        "type": "clk",
+        "direction": "I",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "int64_to_float32_latency4_core_bd_clk",
+            "value_src": "default"
+          },
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default"
+          },
+          "INSERT_VIP": {
+            "value": "0",
+            "value_src": "default"
+          },
+          "PHASE": {
+            "value": "0.000",
+            "value_src": "default"
+          }
+        }
+      },
+      "din": {
+        "type": "data",
+        "direction": "I",
+        "left": "63",
+        "right": "0",
+        "parameters": {
+          "LAYERED_METADATA": {
+            "value": "undef",
+            "value_src": "default"
+          }
+        }
+      },
+      "dout": {
+        "type": "data",
+        "direction": "O",
+        "left": "31",
+        "right": "0",
+        "parameters": {
+          "LAYERED_METADATA": {
+            "value": "xilinx.com:interface:datatypes:1.0 {DATA {datatype {name {attribs {resolve_type immediate dependency {} format string minimum {} maximum {}} value {}} bitwidth {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 32} bitoffset {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 0} real {float {sigwidth {attribs {resolve_type immediate dependency {} format long minimum {} maximum {}} value 24}}}}}}",
+            "value_src": "const_prop"
+          }
+        }
+      }
+    },
+    "components": {
+      "int64_to_float32_latency4_core_1": {
+        "vlnv": "User_Company:SysGen:int64_to_float32_latency4_core:1.0",
+        "xci_name": "int64_to_float32_latency4_core_bd_int64_to_float32_latency4_core_1_0"
+      }
+    },
+    "nets": {
+      "clk_1": {
+        "ports": [
+          "clk",
+          "int64_to_float32_latency4_core_1/clk"
+        ]
+      },
+      "din_1": {
+        "ports": [
+          "din",
+          "int64_to_float32_latency4_core_1/din"
+        ]
+      },
+      "int64_to_float32_latency4_core_1_dout": {
+        "ports": [
+          "int64_to_float32_latency4_core_1/dout",
+          "dout"
+        ]
+      }
+    }
+  }
+}
