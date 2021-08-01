@@ -337,14 +337,6 @@ ediate dependency {} format bool minimum {} maximum {}} value false}}}}}}</spiri
         <spirit:userFileType>xci</spirit:userFileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>fft_4096c_2i_core_c_addsub_v12_0_i4/fft_4096c_2i_core_c_addsub_v12_0_i4.xci</spirit:name>
-        <spirit:userFileType>xci</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>fft_4096c_2i_core_c_addsub_v12_0_i5/fft_4096c_2i_core_c_addsub_v12_0_i5.xci</spirit:name>
-        <spirit:userFileType>xci</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
         <spirit:name>fft_4096c_2i_core_c_counter_binary_v12_0_i0/fft_4096c_2i_core_c_counter_binary_v12_0_i0.xci</spirit:name>
         <spirit:userFileType>xci</spirit:userFileType>
       </spirit:file>
@@ -568,7 +560,7 @@ ediate dependency {} format bool minimum {} maximum {}} value false}}}}}}</spiri
       <spirit:file>
         <spirit:name>hdl/fft_4096c_2i_core.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_6100d528</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_2ee1255f</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
     </spirit:fileSet>
@@ -588,14 +580,6 @@ ediate dependency {} format bool minimum {} maximum {}} value false}}}}}}</spiri
       </spirit:file>
       <spirit:file>
         <spirit:name>fft_4096c_2i_core_c_addsub_v12_0_i3/fft_4096c_2i_core_c_addsub_v12_0_i3.xci</spirit:name>
-        <spirit:userFileType>xci</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>fft_4096c_2i_core_c_addsub_v12_0_i4/fft_4096c_2i_core_c_addsub_v12_0_i4.xci</spirit:name>
-        <spirit:userFileType>xci</spirit:userFileType>
-      </spirit:file>
-      <spirit:file>
-        <spirit:name>fft_4096c_2i_core_c_addsub_v12_0_i5/fft_4096c_2i_core_c_addsub_v12_0_i5.xci</spirit:name>
         <spirit:userFileType>xci</spirit:userFileType>
       </spirit:file>
       <spirit:file>
@@ -871,8 +855,8 @@ ediate dependency {} format bool minimum {} maximum {}} value false}}}}}}</spiri
         <xilinx:xpmLibrary>XPM_FIFO</xilinx:xpmLibrary>
         <xilinx:xpmLibrary>XPM_CDC</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
-      <xilinx:coreRevision>258202518</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2021-07-26T10:57:19Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>258651849</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2021-07-31T15:45:50Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2020.2</xilinx:xilinxVersion>
