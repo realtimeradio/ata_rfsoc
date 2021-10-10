@@ -132,4 +132,5 @@ dmypy.json
 vivado*.jou
 vivado*.log
 vivado*.str
+webtalk*.jou
 *.slx.autosave
