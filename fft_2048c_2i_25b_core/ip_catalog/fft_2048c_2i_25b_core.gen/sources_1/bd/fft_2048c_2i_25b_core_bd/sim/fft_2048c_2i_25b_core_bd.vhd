@@ -1,7 +1,7 @@
 --Copyright 1986-2020 Xilinx, Inc. All Rights Reserved.
 ----------------------------------------------------------------------------------
 --Tool Version: Vivado v.2020.2 (lin64) Build 3064766 Wed Nov 18 09:12:47 MST 2020
---Date        : Wed Oct 20 15:41:02 2021
+--Date        : Wed Nov  3 15:15:50 2021
 --Host        : rtr-dev1 running 64-bit Ubuntu 18.04.4 LTS
 --Command     : generate_target fft_2048c_2i_25b_core_bd.bd
 --Design      : fft_2048c_2i_25b_core_bd

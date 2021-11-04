@@ -548,7 +548,7 @@ ediate dependency {} format bool minimum {} maximum {}} value false}}}}}}</spiri
       <spirit:file>
         <spirit:name>hdl/fft_2048c_2i_25b_core.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_3f2ad330</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_4b78397c</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
     </spirit:fileSet>
@@ -831,8 +831,8 @@ ediate dependency {} format bool minimum {} maximum {}} value false}}}}}}</spiri
         <xilinx:xpmLibrary>XPM_FIFO</xilinx:xpmLibrary>
         <xilinx:xpmLibrary>XPM_CDC</xilinx:xpmLibrary>
       </xilinx:xpmLibraries>
-      <xilinx:coreRevision>265649969</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2021-10-20T15:40:57Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>266858055</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2021-11-03T15:15:44Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2020.2</xilinx:xilinxVersion>
