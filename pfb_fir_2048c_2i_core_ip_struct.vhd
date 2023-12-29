@@ -15,7 +15,7 @@ entity pfb_fir_2048c_2i_core_ip_struct is
 end pfb_fir_2048c_2i_core_ip_struct;
 
 architecture structural of pfb_fir_2048c_2i_core_ip_struct is
-  component pfb_fir_2048c_2i_core_ip
+  component pfb_fir_2048c_2i_core
     port ( 
       pol_in : in std_logic_vector( 256-1 downto 0 );
       pol_out : out std_logic_vector( 288-1 downto 0 );
@@ -25,7 +25,7 @@ architecture structural of pfb_fir_2048c_2i_core_ip_struct is
     );
   end component;
 begin
-  pfb_fir_2048c_2i_core_ip_inst : pfb_fir_2048c_2i_core_ip
+  pfb_fir_2048c_2i_core_ip_inst : pfb_fir_2048c_2i_core
   port map (
     pol_in => pol_in,
     pol_out => pol_out,

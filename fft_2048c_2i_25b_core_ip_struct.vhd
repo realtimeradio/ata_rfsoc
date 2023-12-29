@@ -17,7 +17,7 @@ entity fft_2048c_2i_25b_core_ip_struct is
 end fft_2048c_2i_25b_core_ip_struct;
 
 architecture structural of fft_2048c_2i_25b_core_ip_struct is
-  component fft_2048c_2i_25b_core_ip
+  component fft_2048c_2i_25b_core
     port (
       pol_in : in std_logic_vector( 288-1 downto 0 );
       shift : in std_logic_vector( 16-1 downto 0 );
@@ -29,7 +29,7 @@ architecture structural of fft_2048c_2i_25b_core_ip_struct is
     );
   end component;
 begin
-  fft_2048c_2i_25b_core_ip_inst : fft_2048c_2i_25b_core_ip
+  fft_2048c_2i_25b_core_ip_inst : fft_2048c_2i_25b_core
   port map (
     pol_in => pol_in, 
     shift    => shift   , 
