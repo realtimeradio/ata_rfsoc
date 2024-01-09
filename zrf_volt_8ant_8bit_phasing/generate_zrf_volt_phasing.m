@@ -12,28 +12,64 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     %     error('FPGA type %s is not allowed.', fpga_type);
     % end
 
-    [filepath, name, ext] = fileparts(which(model_name));
-
-    new_model_name = 
-
     nof_chan_bits_str = num2str(nof_chan_bits);
     nof_channels = 2^nof_chan_bits;
     nof_channels_str =  num2str(nof_channels);
+
+    %Create build directory in the same location as the model to be edited.
+    [filepath, name, ext] = fileparts(which(model_name));
+    updated_model_name = replace(name, 'nchan', sprintf('%sc',nof_channels_str));
+
+    build_dir = [filepath '/build' '/' updated_model_name '/'];
+
+    if ~exist(build_dir, 'dir')
+        mkdir(build_dir)
+     end
+    fprintf(['Saving build results to: ' build_dir])
     
      %Create DCP slx files FFT:
-    open_system('fft_nchan_2i_25b_core.slx');
-    set_param(['fft_nchan_2i_25b_core' '/shift'], 'n_bits', nof_chan_bits_str);
-    set_param(['fft_nchan_2i_25b_core' '/fft_wideband_real'], 'FFTSize', nof_chan_bits_str);
-    updated_fft_model_filename = [filepath '/build/' sprintf('fft_%dc_2i_25b_core.slx', nof_channels)];
-    save_system('fft_nchan_2i_25b_core', updated_fft_model_filename); %Save new fft slx - slx will contain the channel width
+    [fft_filepath, fft_name, fft_ext] = fileparts(which('fft_nchan_2i_25b_core.slx'));
+    open_system([fft_name fft_ext]);
+    set_param([fft_name '/shift'], 'n_bits', nof_chan_bits_str);
+    set_param([fft_name '/fft_wideband_real'], 'FFTSize', nof_chan_bits_str);
+    xlsetparam([fft_name '/ System Generator'], 'directory', build_dir); %Set the directory for a design checkpoint compile
+    xlsetparam([fft_name '/ System Generator'], 'compilation_display', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
+     %TODO add option to set FPGA part?
+
+    updated_fft_model_filename = [build_dir replace(fft_name, 'nchan', sprintf('%sc',nof_channels_str))];
+    save_system(fft_name, updated_fft_model_filename); %Save new fft slx - slx name will contain the channel width
     close_system(updated_fft_model_filename);
+    if isfile([updated_fft_model_filename '.dcp'])
+        fprintf(['Design checkpoint for model ' updated_fft_model_filename ' already appears to exist - not recompiling']);
+    else
+        [new_fft_filepath, new_fft_name, new_fft_ext] = fileparts([updated_fft_model_filename fft_ext]);
+        open_system([updated_fft_model_filename fft_ext]);
+        xsg_result = xlGenerateButton([new_fft_name '/ System Generator']);
+        save_system(new_fft_name, updated_fft_model_filename)
+        close_system(updated_fft_model_filename);
+    end
+    
 
     %Create DCP slx files FIR:
-    open_system('pfb_fir_nchan_2i_core.slx')
-    set_param(['pfb_fir_nchan_2i_core' '/pfb_fir'], 'PFBSize', nof_chan_bits_str)
-    updated_fir_model_filename = [filepath '/build/' sprintf('pfb_fir_%dc_2i_core.slx', nof_channels)];
-    save_system('pfb_fir_nchan_2i_core', updated_fir_model_filename) %Save new fft slx - slx will contain the channel width
+    [fir_filepath, fir_name, fir_ext] = fileparts(which('pfb_fir_nchan_2i_core.slx'));
+    open_system([fir_name fir_ext]);
+    set_param([fir_name '/pfb_fir'], 'PFBSize', nof_chan_bits_str);
+    xlsetparam([fir_name '/ System Generator'], 'directory', build_dir); %Set the directory for a design checkpoint compile
+    xlsetparam([fir_name '/ System Generator'], 'compilation_display', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
+     %TODO add option to set FPGA part?
+
+    updated_fir_model_filename = [build_dir replace(fir_name, 'nchan', sprintf('%sc',nof_channels_str))];
+    save_system(fir_name, updated_fir_model_filename) %Save new fft slx - slx will contain the channel width
     close_system(updated_fir_model_filename);
+    if isfile([updated_fir_model_filename '.dcp'])
+        fprintf(['Design checkpoint for model ' updated_fir_model_filename ' already appears to exist - not recompiling']);
+    else
+        [new_fir_filepath, new_fir_name, new_fir_ext] = fileparts([updated_fir_model_filename fir_ext]);
+        open_system([updated_fir_model_filename fir_ext]);
+        xsg_result = xlGenerateButton([new_fir_name '/ System Generator']);
+        save_system(new_fir_name, updated_fir_model_filename)
+        close_system(updated_fir_model_filename);
+    end
 
     %Update zrf_volt_phasing model to have correct channel lengths:
     open_system([name ext])
@@ -44,11 +80,9 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     %iterate through vector accumulators (vacc_ss) TODO:
 
     %Update DCP blocks to point to correct locations TOFINISH with dcp compilation:
-    [fft_filepath, fft_name, fft_ext] = fileparts(which(updated_fft_model_filename));
-    set_param([name '/dcp_fft'], 'dcp_file', [fft_filepath '/' fft_name '.dcp']);
+    set_param([name '/dcp_fft'], 'dcp_file', [updated_fft_model_filename '.dcp']);
 
-    [fir_filepath, fir_name, fir_ext] = fileparts(which(updated_fir_model_filename));
-    set_param([name '/dcp_fir'], 'dcp_file', [fir_filepath '/' fir_name '.dcp']);
+    set_param([name '/dcp_fir'], 'dcp_file', [updated_fir_model_filename '.dcp']);
     
     %Set nchan parameter throughout pipelines:
     nof_pipelines = 8;
@@ -66,7 +100,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     end
 
     %Set nchan parameter throughout chan_reorders:
-    nof_chanreorders = 2;
+    nof_chan_reorders = 2;
     for j=0:nof_chan_reorders-1
         reorder_data_width = nof_channels/4;
         chan_output_order = reshape(permute(reshape([0:(reorder_data_width)*16 - 1], (reorder_data_width), 16), [2,1]), (reorder_data_width)*16, 1)
@@ -87,20 +121,17 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     nof_packetizers = 2;
     for k=0:nof_packetizers-1
         set_param([name sprintf('/packetizer%d',k)], 'nchan_bits', nof_chan_bits_str);
-
     end
 
-
-
-    % new_model = [filepath '/' name '_' fpga_type];
-    % if exist([new_model '.slx'], 'file')
-    %     error('Model %s already exists', new_model);
-    % end
-    % % Open input model. Change FPGA type and save as new file.
-    % % return system name.
-    % open_system(model_name);
-    % set_param([name '/aa'], 'hw_sys', ['htg_zrf16:' fpga_type]);
-    % set_param()
-    % save_system(name, new_model);
-    % close_system(new_model);
+    new_model = [filepath '/' name '_' fpga_type];
+    if exist([new_model '.slx'], 'file')
+        error('Model %s already exists', new_model);
+    end
+    % Open input model. Change FPGA type and save as new file.
+    % return system name.
+    open_system(model_name);
+    set_param([name '/aa'], 'hw_sys', ['htg_zrf16:' fpga_type]);
+    set_param()
+    save_system(name, new_model);
+    close_system(new_model);
 end
