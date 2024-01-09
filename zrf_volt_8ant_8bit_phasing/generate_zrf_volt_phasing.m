@@ -33,7 +33,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     set_param([fft_name '/shift'], 'n_bits', nof_chan_bits_str);
     set_param([fft_name '/fft_wideband_real'], 'FFTSize', nof_chan_bits_str);
     xlsetparam([fft_name '/ System Generator'], 'directory', build_dir); %Set the directory for a design checkpoint compile
-    xlsetparam([fft_name '/ System Generator'], 'compilation_display', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
+    xlsetparam([fft_name '/ System Generator'], 'compilation', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
      %TODO add option to set FPGA part?
 
     updated_fft_model_filename = [build_dir replace(fft_name, 'nchan', sprintf('%sc',nof_channels_str))];
@@ -43,7 +43,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
         fprintf(['Design checkpoint for model ' updated_fft_model_filename ' already appears to exist - not recompiling']);
     else
         [new_fft_filepath, new_fft_name, new_fft_ext] = fileparts([updated_fft_model_filename fft_ext]);
-        open_system([updated_fft_model_filename fft_ext]);
+        open_system([updated_fft_model_filename new_fft_ext]);
         xsg_result = xlGenerateButton([new_fft_name '/ System Generator']);
         save_system(new_fft_name, updated_fft_model_filename)
         close_system(updated_fft_model_filename);
@@ -55,7 +55,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     open_system([fir_name fir_ext]);
     set_param([fir_name '/pfb_fir'], 'PFBSize', nof_chan_bits_str);
     xlsetparam([fir_name '/ System Generator'], 'directory', build_dir); %Set the directory for a design checkpoint compile
-    xlsetparam([fir_name '/ System Generator'], 'compilation_display', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
+    xlsetparam([fir_name '/ System Generator'], 'compilation', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
      %TODO add option to set FPGA part?
 
     updated_fir_model_filename = [build_dir replace(fir_name, 'nchan', sprintf('%sc',nof_channels_str))];
@@ -65,7 +65,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
         fprintf(['Design checkpoint for model ' updated_fir_model_filename ' already appears to exist - not recompiling']);
     else
         [new_fir_filepath, new_fir_name, new_fir_ext] = fileparts([updated_fir_model_filename fir_ext]);
-        open_system([updated_fir_model_filename fir_ext]);
+        open_system([updated_fir_model_filename new_fir_ext]);
         xsg_result = xlGenerateButton([new_fir_name '/ System Generator']);
         save_system(new_fir_name, updated_fir_model_filename)
         close_system(updated_fir_model_filename);
@@ -77,7 +77,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     set_param([name '/spec_tvg/tvg'], 'nchan_bits', nof_chan_bits_str)
     set_param([name '/spec_tvg/tvg'], 'nchan_bits', nof_chan_bits_str)
     set_param([name '/corr'], 'n_chan_bits', nof_chan_bits_str)
-    %iterate through vector accumulators (vacc_ss) TODO:
+    set_param([name '/vacc_ss'], 'n_chan_bits', nof_chan_bits_str)
 
     %Update DCP blocks to point to correct locations TOFINISH with dcp compilation:
     set_param([name '/dcp_fft'], 'dcp_file', [updated_fft_model_filename '.dcp']);
@@ -103,7 +103,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     nof_chan_reorders = 2;
     for j=0:nof_chan_reorders-1
         reorder_data_width = nof_channels/4;
-        chan_output_order = reshape(permute(reshape([0:(reorder_data_width)*16 - 1], (reorder_data_width), 16), [2,1]), (reorder_data_width)*16, 1)
+        chan_output_order = reshape(permute(reshape([0:(reorder_data_width)*16 - 1], (reorder_data_width), 16), [2,1]), (reorder_data_width)*16, 1);
         set_param([name sprintf('/chan_reorder%d/reorder2',j)], 'map', num2str(chan_output_order));
         set_param([name sprintf('/chan_reorder%d/reorder2',j)], 'n_bits', num2str(reorder_data_width));
         reorder_width_bits = nof_chan_bits+2;
