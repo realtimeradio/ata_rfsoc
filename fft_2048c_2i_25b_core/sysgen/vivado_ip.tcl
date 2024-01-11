@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------
-# System Generator version 2020.2 IP Tcl source file.
+# System Generator version 2021.2 IP Tcl source file.
 #
-# Copyright(C) 2020 by Xilinx, Inc.  All rights reserved.  This
+# Copyright(C) 2021 by Xilinx, Inc.  All rights reserved.  This
 # text/file contains proprietary, confidential information of Xilinx,
 # Inc., is distributed under license from Xilinx, Inc., and may be used,
 # copied and/or disclosed only pursuant to the terms of a valid license
@@ -30,7 +30,7 @@
 # sole risk and will be unsupported.
 #
 # This copyright and support notice must be retained as part of this
-# text at all times.  (c) Copyright 1995-2020 Xilinx, Inc.  All rights
+# text at all times.  (c) Copyright 1995-2021 Xilinx, Inc.  All rights
 # reserved.
 #-----------------------------------------------------------------
 
@@ -631,11 +631,11 @@ lappend params_list CONFIG.Borrow_Sense {Active_Low}
 lappend params_list CONFIG.Bypass {false}
 lappend params_list CONFIG.Bypass_CE_Priority {Bypass_Overrides_CE}
 lappend params_list CONFIG.Bypass_Sense {Active_Low}
-lappend params_list CONFIG.CE {true}
+lappend params_list CONFIG.CE {false}
 lappend params_list CONFIG.C_In {false}
 lappend params_list CONFIG.C_Out {false}
 lappend params_list CONFIG.Implementation {Fabric}
-lappend params_list CONFIG.Latency {1}
+lappend params_list CONFIG.Latency {0}
 lappend params_list CONFIG.Out_Width {11}
 lappend params_list CONFIG.SCLR {false}
 lappend params_list CONFIG.SINIT {false}

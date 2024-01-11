@@ -1778,6 +1778,9 @@ namespace eval ::xilinx::dsp::planaheadworker {
       } elseif [string match -nocase "mem" $filetype]{
 	    puts -nonewline $fpbxml {MEM}
 
+      } elseif [string match -nocase "vh" $filetype]{
+       puts -nonewline $fpbxml {VHeader}
+
       }else {
          puts -nonewline $fpbxml [string toupper $filetype]
       }
@@ -2702,15 +2705,15 @@ namespace eval ::xilinx::dsp::planaheadworker {
                 # Add subcore reference to Synthesis 
                 set baseDir [format "%s/synth" $ipPath]
                 set destDirSynth [format "%s/ips/%s/synth" $ippath $ipName]
-                dsp_ip_packager_copy_files $baseDir $destDirSynth {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mif" "*.coe" "*.mem"}
+                dsp_ip_packager_copy_files $baseDir $destDirSynth {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mif" "*.coe" "*.mem" "*.vh"}
                 ipx::add_component_subcore_ref $vendor $library $name $version $synth
-                dsp_ip_packager_add_files_to_group $destDirSynth $synth {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mif" "*.coe" "*.mem"} {work}
+                dsp_ip_packager_add_files_to_group $destDirSynth $synth {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mif" "*.coe" "*.mem" "*.vh"} {work}
                 # Add subcore reference to Simulation    
                 set baseDir [format "%s/sim" $ipPath]
                 set destDirSim [format "%s/ips/%s/sim" $ippath $ipName]
-                dsp_ip_packager_copy_files $baseDir $destDirSim {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mif" "*.coe" "*.mem"}
+                dsp_ip_packager_copy_files $baseDir $destDirSim {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mif" "*.coe" "*.mem" "*.vh"}
                 ipx::add_component_subcore_ref $vendor $library $name $version $sim
-                dsp_ip_packager_add_files_to_group $destDirSim $sim {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mif" "*.coe" "*.mem"}  {work}
+                dsp_ip_packager_add_files_to_group $destDirSim $sim {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mif" "*.coe" "*.mem" "*.vh"}  {work}
 
                 # Add COE file into synthesis and simulation
                 set baseDir [format "%s/%s/%s.srcs/sources_1/ip/" $root $folder $nam]
@@ -2794,9 +2797,9 @@ namespace eval ::xilinx::dsp::planaheadworker {
         set nam [dsp_ip_packager_get_top_name] 
         set baseDir [format "%s/%s/%s.srcs/sources_1/imports/sysgen/" $root $folder $nam]
         set destDir [format "%s/src/" $ippath]
-        dsp_ip_packager_copy_files $baseDir $destDir {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mem"}
-        dsp_ip_packager_add_files_to_group $destDir $synth {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mem"}  {work}
-        dsp_ip_packager_add_files_to_group $destDir $sim {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mem"} {work}
+        dsp_ip_packager_copy_files $baseDir $destDir {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mem" "*.vh"}
+        dsp_ip_packager_add_files_to_group $destDir $synth {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mem" "*.vh"}  {work}
+        dsp_ip_packager_add_files_to_group $destDir $sim {"*.ngc" "*.v" "*.vhd" "*.vhdl" "*.mem" "*.vh"} {work}
         
         set baseDir [format "%s/%s/%s.srcs/constrs_1/imports/sysgen/" $root $folder $nam]
         set destDir [format "%s/constrain/" $ippath]
@@ -2810,8 +2813,8 @@ namespace eval ::xilinx::dsp::planaheadworker {
             set_property model_name [dsp_ip_packager_get_top_name] $test
             set baseDir [format "%s/%s/%s.srcs/sim_1/imports/sysgen/" $root $folder $nam]
             set destDir [format "%s/testbench/" $ippath]
-            dsp_ip_packager_copy_files $baseDir $destDir {"*.v" "*.vhd" "*.vhdl" "*.mem"}
-            dsp_ip_packager_add_files_to_group $destDir $test {"*.v" "*.vhd" "*.vhdl" "*.mem"} {work}
+            dsp_ip_packager_copy_files $baseDir $destDir {"*.v" "*.vhd" "*.vhdl" "*.mem" "*.vh"}
+            dsp_ip_packager_add_files_to_group $destDir $test {"*.v" "*.vhd" "*.vhdl" "*.mem" "*.vh"} {work}
         
             set baseDir [format "%s/%s/%s.srcs/sim_1/imports/" $root $folder $nam]
             set destDir [format "%s/testbench/" $ippath]
@@ -2872,6 +2875,10 @@ namespace eval ::xilinx::dsp::planaheadworker {
           remove_files $filelist
        }
        set filelist [get_files -of_objects {sources_1} *.mem]
+       if {[llength $filelist] > 0 } {
+          remove_files $filelist
+       }
+      set filelist [get_files -of_objects {sources_1} *.vh]
        if {[llength $filelist] > 0 } {
           remove_files $filelist
        }
@@ -3910,7 +3917,7 @@ namespace eval ::xilinx::dsp::planaheadworker {
     }
     file mkdir "$root_ip_dir"
     
-    set projfilesexts "xci ucf xdc xco dat coe mem mif ngc vhd vhdl v h c htm mdd mtcl mak html dcp"
+    set projfilesexts "xci ucf xdc xco dat coe mem mif ngc vh vhd vhdl v h c htm mdd mtcl mak html dcp"
     set projpath [ get_property DIRECTORY [current_project] ]
     set nam [dsp_ip_packager_get_top_name]
     ::close_project
@@ -4051,12 +4058,7 @@ namespace eval ::xilinx::dsp::planaheadworker {
     
       save_bd_design
       # Create a Wrapper for the BD Design and Make that the top Level
-      # Since we create only one block diagram it is okay to use *.bd
-      # quite added to ensure that project exhits gracefully even
-      # if there are issues with validation and generation
-      # done because FREQ parameter was not being propagated to xternal
-      # interface pins
-      set top_wrapper [make_wrapper -files [get_files *.bd] -top -quiet]
+      set top_wrapper [make_wrapper -files [get_files $bd_design.bd] -top -quiet]
       import_files -force -norecurse $top_wrapper -quiet 
       set_property top [file rootname [file tail $top_wrapper]]  [current_fileset] -quiet 
   }

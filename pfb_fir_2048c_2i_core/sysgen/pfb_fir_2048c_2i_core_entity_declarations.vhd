@@ -1,7 +1,7 @@
 -------------------------------------------------------------------
--- System Generator version 2020.2 VHDL source file.
+-- System Generator version 2021.2 VHDL source file.
 --
--- Copyright(C) 2020 by Xilinx, Inc.  All rights reserved.  This
+-- Copyright(C) 2021 by Xilinx, Inc.  All rights reserved.  This
 -- text/file contains proprietary, confidential information of Xilinx,
 -- Inc., is distributed under license from Xilinx, Inc., and may be used,
 -- copied and/or disclosed only pursuant to the terms of a valid license
@@ -30,7 +30,7 @@
 -- sole risk and will be unsupported.
 --
 -- This copyright and support notice must be retained as part of this
--- text at all times.  (c) Copyright 1995-2020 Xilinx, Inc.  All rights
+-- text at all times.  (c) Copyright 1995-2021 Xilinx, Inc.  All rights
 -- reserved.
 -------------------------------------------------------------------
 
@@ -564,23 +564,23 @@ use xil_defaultlib.conv_pkg.all;
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
-entity sysgen_counter_0619299a43 is
+entity sysgen_counter_f6823d2bda is
   port (
     op : out std_logic_vector((9 - 1) downto 0);
     clk : in std_logic;
     ce : in std_logic;
     clr : in std_logic);
-end sysgen_counter_0619299a43;
-architecture behavior of sysgen_counter_0619299a43
+end sysgen_counter_f6823d2bda;
+architecture behavior of sysgen_counter_f6823d2bda
 is
   signal count_reg_20_23: unsigned((9 - 1) downto 0) := "000000000";
   signal count_reg_20_23_rst: std_logic;
   signal rel_34_8: boolean;
   signal rst_limit_join_34_5: boolean;
   signal bool_44_4: boolean;
-  signal rst_limit_join_44_1: boolean;
   signal count_reg_join_44_1: unsigned((10 - 1) downto 0);
   signal count_reg_join_44_1_rst: std_logic;
+  signal rst_limit_join_44_1: boolean;
 begin
   proc_count_reg_20_23: process (clk)
   is

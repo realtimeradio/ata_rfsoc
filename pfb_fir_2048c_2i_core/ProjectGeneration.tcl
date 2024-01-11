@@ -4,9 +4,18 @@
 
 
 namespace eval ::xilinx::dsp::planaheaddriver {
-	set Compilation {IP Catalog}
-	set CompilationFlow {IP}
-	set CreateInterfaceDocument {off}
+	proc additional_tcl_commands {} { 
+		set_property -name {STEPS.SYNTH_DESIGN.ARGS.MORE OPTIONS} -value {-mode out_of_context} -objects [get_runs synth_1]
+		set_property USED_IN {out_of_context synthesis implementation} [get_files pfb_fir_2048c_2i_core_clock.xdc]
+		launch_runs synth_1
+		wait_on_run synth_1
+		open_run synth_1 -name netlist_1
+		write_checkpoint pfb_fir_2048c_2i_core.dcp -force
+	}
+
+	set Compilation {Synthesized Checkpoint}
+	set CompilationFlow {Project}
+	set CustomProjectDir {Synthesized Checkpoint}
 	set DSPDevice {xczu49dr}
 	set DSPFamily {zynquplus}
 	set DSPPackage {ffvf1760}
@@ -15,22 +24,8 @@ namespace eval ::xilinx::dsp::planaheaddriver {
 	set GenerateTestBench 0
 	set HDLLanguage {vhdl}
 	set IPOOCCacheRootPath {/home/jackh/.Xilinx/Sysgen/SysgenVivado/lnx64.o/ip}
-	set IP_Auto_Infer {1}
-	set IP_Categories_Text {System_Generator_for_DSP}
-	set IP_Common_Repos {0}
-	set IP_Description {}
-	set IP_Dir {}
-	set IP_Library_Text {SysGen}
-	set IP_LifeCycle_Menu {2}
-	set IP_Logo {sysgen_icon_100.png}
-	set IP_Name {}
-	set IP_Revision {258814808}
-	set IP_Socket_IP {0}
-	set IP_Socket_IP_Proj_Path {}
-	set IP_Vendor_Text {User_Company}
-	set IP_Version_Text {1.0}
 	set ImplStrategyName {Vivado Implementation Defaults}
-	set PostProjectCreationProc {dsp_package_for_vivado_ip_integrator}
+	set PostProjectCreationProc {additional_tcl_commands}
 	set Project {pfb_fir_2048c_2i_core}
 	set ProjectFiles {
 		{{conv_pkg.vhd} -lib {xil_defaultlib}}
@@ -42,39 +37,39 @@ namespace eval ::xilinx::dsp::planaheaddriver {
 		{{single_reg_w_init.vhd} -lib {xil_defaultlib}}
 		{{xlclockdriver_rd.vhd} -lib {xil_defaultlib}}
 		{{vivado_ip.tcl}}
-		{{xpm_4381d8_vivado.mem}}
-		{{xpm_bead70_vivado.mem}}
-		{{xpm_4e5da5_vivado.mem}}
-		{{xpm_ef073c_vivado.mem}}
+		{{xpm_027c5e_vivado.mem}}
+		{{xpm_fcf5ba_vivado.mem}}
+		{{xpm_470b5d_vivado.mem}}
+		{{xpm_6b5e3a_vivado.mem}}
 		{{xpm_f6cc85_vivado.mem}}
-		{{xpm_eeb100_vivado.mem}}
-		{{xpm_4d90cf_vivado.mem}}
-		{{xpm_71bcdd_vivado.mem}}
-		{{xpm_90db8f_vivado.mem}}
-		{{xpm_3c94e8_vivado.mem}}
-		{{xpm_5a9676_vivado.mem}}
-		{{xpm_aed15d_vivado.mem}}
-		{{xpm_8941d3_vivado.mem}}
-		{{xpm_c0ff50_vivado.mem}}
-		{{xpm_610515_vivado.mem}}
-		{{xpm_3551a2_vivado.mem}}
-		{{xpm_8e1f7a_vivado.mem}}
-		{{xpm_8f7169_vivado.mem}}
-		{{xpm_2d815b_vivado.mem}}
-		{{xpm_f2c0b4_vivado.mem}}
-		{{xpm_654349_vivado.mem}}
-		{{xpm_6fc6b5_vivado.mem}}
-		{{xpm_33a550_vivado.mem}}
-		{{xpm_456e1b_vivado.mem}}
-		{{xpm_82ea94_vivado.mem}}
-		{{xpm_64b848_vivado.mem}}
-		{{xpm_6883e8_vivado.mem}}
-		{{xpm_0dce3a_vivado.mem}}
-		{{xpm_d021f2_vivado.mem}}
-		{{xpm_57fc2c_vivado.mem}}
-		{{xpm_82dbf7_vivado.mem}}
-		{{xpm_042761_vivado.mem}}
-		{{xpm_fdc8d3_vivado.mem}}
+		{{xpm_fc352f_vivado.mem}}
+		{{xpm_ce6d93_vivado.mem}}
+		{{xpm_b25a5f_vivado.mem}}
+		{{xpm_52e1e9_vivado.mem}}
+		{{xpm_9c0ecb_vivado.mem}}
+		{{xpm_1e2fde_vivado.mem}}
+		{{xpm_6d8053_vivado.mem}}
+		{{xpm_792025_vivado.mem}}
+		{{xpm_33c2ab_vivado.mem}}
+		{{xpm_7cde6b_vivado.mem}}
+		{{xpm_8165e0_vivado.mem}}
+		{{xpm_220b07_vivado.mem}}
+		{{xpm_42c212_vivado.mem}}
+		{{xpm_96c9fb_vivado.mem}}
+		{{xpm_4e1c3f_vivado.mem}}
+		{{xpm_4d6db9_vivado.mem}}
+		{{xpm_d28ae8_vivado.mem}}
+		{{xpm_858fb8_vivado.mem}}
+		{{xpm_3fe583_vivado.mem}}
+		{{xpm_a6c1cd_vivado.mem}}
+		{{xpm_23a9e3_vivado.mem}}
+		{{xpm_1480db_vivado.mem}}
+		{{xpm_ae17f6_vivado.mem}}
+		{{xpm_fc104c_vivado.mem}}
+		{{xpm_544357_vivado.mem}}
+		{{xpm_3f9641_vivado.mem}}
+		{{xpm_ac7bad_vivado.mem}}
+		{{xpm_001338_vivado.mem}}
 		{{pfb_fir_2048c_2i_core_entity_declarations.vhd} -lib {xil_defaultlib}}
 		{{pfb_fir_2048c_2i_core.vhd} -lib {xil_defaultlib}}
 		{{pfb_fir_2048c_2i_core_clock.xdc}}
@@ -87,7 +82,7 @@ namespace eval ::xilinx::dsp::planaheaddriver {
 	set SynthesisTool {Vivado}
 	set TargetDir {/home/jackh/src/ata_rfsoc/pfb_fir_2048c_2i_core}
 	set TopLevelModule {pfb_fir_2048c_2i_core}
-	set TopLevelSimulinkHandle 122663
+	set TopLevelSimulinkHandle 623985
 	set VHDLLib {xil_defaultlib}
 	set TopLevelPortInterface {}
 	dict set TopLevelPortInterface sync Name {sync}

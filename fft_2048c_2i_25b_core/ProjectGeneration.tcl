@@ -4,9 +4,18 @@
 
 
 namespace eval ::xilinx::dsp::planaheaddriver {
-	set Compilation {IP Catalog}
-	set CompilationFlow {IP}
-	set CreateInterfaceDocument {off}
+	proc additional_tcl_commands {} { 
+		set_property -name {STEPS.SYNTH_DESIGN.ARGS.MORE OPTIONS} -value {-mode out_of_context} -objects [get_runs synth_1]
+		set_property USED_IN {out_of_context synthesis implementation} [get_files fft_2048c_2i_25b_core_clock.xdc]
+		launch_runs synth_1
+		wait_on_run synth_1
+		open_run synth_1 -name netlist_1
+		write_checkpoint fft_2048c_2i_25b_core.dcp -force
+	}
+
+	set Compilation {Synthesized Checkpoint}
+	set CompilationFlow {Project}
+	set CustomProjectDir {Synthesized Checkpoint}
 	set DSPDevice {xczu49dr}
 	set DSPFamily {zynquplus}
 	set DSPPackage {ffvf1760}
@@ -15,22 +24,8 @@ namespace eval ::xilinx::dsp::planaheaddriver {
 	set GenerateTestBench 0
 	set HDLLanguage {vhdl}
 	set IPOOCCacheRootPath {/home/jackh/.Xilinx/Sysgen/SysgenVivado/lnx64.o/ip}
-	set IP_Auto_Infer {1}
-	set IP_Categories_Text {System_Generator_for_DSP}
-	set IP_Common_Repos {0}
-	set IP_Description {}
-	set IP_Dir {}
-	set IP_Library_Text {SysGen}
-	set IP_LifeCycle_Menu {2}
-	set IP_Logo {sysgen_icon_100.png}
-	set IP_Name {}
-	set IP_Revision {266858055}
-	set IP_Socket_IP {0}
-	set IP_Socket_IP_Proj_Path {}
-	set IP_Vendor_Text {User_Company}
-	set IP_Version_Text {1.0}
 	set ImplStrategyName {Vivado Implementation Defaults}
-	set PostProjectCreationProc {dsp_package_for_vivado_ip_integrator}
+	set PostProjectCreationProc {additional_tcl_commands}
 	set Project {fft_2048c_2i_25b_core}
 	set ProjectFiles {
 		{{conv_pkg.vhd} -lib {xil_defaultlib}}
@@ -75,7 +70,7 @@ namespace eval ::xilinx::dsp::planaheaddriver {
 	set SynthesisTool {Vivado}
 	set TargetDir {/home/jackh/src/ata_rfsoc/fft_2048c_2i_25b_core}
 	set TopLevelModule {fft_2048c_2i_25b_core}
-	set TopLevelSimulinkHandle 140800
+	set TopLevelSimulinkHandle 505010
 	set VHDLLib {xil_defaultlib}
 	set TopLevelPortInterface {}
 	dict set TopLevelPortInterface sync Name {sync}
