@@ -31,7 +31,7 @@ function fft_top_filepath = fft_nchan_2i_25b_corr_codegen(destination_filepath, 
     "  );"
     "end structural; "];
 
-    fft_top_filepath = [destination_filepath sprintf("/fft_%d_2i_25b_core_ip_struct.vhd",npoints)];
+    fft_top_filepath = [destination_filepath sprintf('/fft_%d_2i_25b_core_ip_struct.vhd',npoints)];
     fileopn = fopen(fft_top_filepath,'w');
     if(fileopn == -1)
         error("Cannot write out temporary HDL file")

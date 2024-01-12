@@ -47,6 +47,9 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     xlsetparam([fft_name '/ System Generator'], 'compilation', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
     xlsetparam([fft_name '/ System Generator'], 'xilinxfamily', 'Zynq UltraScale+ RFSoc'); %Set the family
     xlsetparam([fft_name '/ System Generator'], 'part', fpga_part) %Set the part
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %JACK DO YOU WANT TO SET SPEED AND PACKAGE HERE TOO? 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     updated_fft_model_filename = [dcp_fft_builddir '/' new_fft_name];
     save_system(fft_name, updated_fft_model_filename); %Save new fft slx - slx name will contain the channel width
@@ -74,6 +77,9 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     xlsetparam([fir_name '/ System Generator'], 'compilation', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
     xlsetparam([fir_name '/ System Generator'], 'xilinxfamily', 'Zynq UltraScale+ RFSoc'); %Set the family
     xlsetparam([fir_name '/ System Generator'], 'part', fpga_part) %Set the part
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %JACK DO YOU WANT TO SET SPEED AND PACKAGE HERE TOO? 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     updated_fir_model_filename = [dcp_fir_builddir '/' new_fir_name];
     save_system(fir_name, updated_fir_model_filename) %Save new fft slx - slx will contain the channel width
@@ -95,11 +101,22 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     set_param([name '/corr'], 'n_chan_bits', nof_chan_bits_str)
     set_param([name '/vacc_ss'], 'n_chan_bits', nof_chan_bits_str)
 
-    %Update DCP blocks to point to correct locations TOFINISH with dcp compilation:
-    set_param([name '/dcp_fft'], 'dcp_file', [updated_fft_model_filename '.dcp']);
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %JACK This is where we update DCP blocks to point to correct locations - UNTESTED AS CANNOT GENERATE DCP FILES
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    fft_dcp_file = [updated_fft_model_filename '.dcp'];
+    if exist(fft_dcp_file)
+        set_param([name '/dcp_fft'], 'dcp_file', fft_dcp_file);
+    else
+        error('FFT dcp file: %s does not exist', fft_dcp_file);
+    end
+    fir_dcp_file = [updated_fir_model_filename '.dcp'];
+    if exist(fir_dcp_file)
+        set_param([name '/dcp_fir'], 'dcp_file', fir_dcp_file);
+    else
+        error('FFT dcp file: %s does not exist', fir_dcp_file);
+    end
 
-    set_param([name '/dcp_fir'], 'dcp_file', [updated_fir_model_filename '.dcp']);
-    
     %Set nchan parameter throughout pipelines:
     nof_pipelines = 8;
     for i=0:nof_pipelines-1
@@ -130,10 +147,16 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
         set_param([name sprintf('/chan_reorder%d/reorder2/map_mod',j)], 'depth', num2str(reorder_width));
         set_param([name sprintf('/chan_reorder%d/reorder2/addr_expand',j)], 'outputWidth', num2str(reorder_width_bits));
         set_param([name sprintf('/chan_reorder%d/reorder2/current_map',j)], 'depth', num2str(reorder_width));
-        %MIGHT NEED TO DO SOMETHING TO THE transpose_t_c BLOCK and square_transposer...
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %JACK MIGHT NEED TO DO SOMETHING TO THE transpose_t_c BLOCK and square_transposer...
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
     end
 
     %Set nchan parameter throughout packetizers:
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %JACK is this enough for the packetizer blocks?
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     nof_packetizers = 2;
     for k=0:nof_packetizers-1
         set_param([name sprintf('/packetizer%d',k)], 'nchan_bits', nof_chan_bits_str);
