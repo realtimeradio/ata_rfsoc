@@ -4,7 +4,7 @@ function fft_nchan_2i_25b_core_config(this_block)
   this_block.setTopLevelLanguage('VHDL');
 
   filepath = fileparts(which('fft_nchan_2i_25b_core_config'));
-  build_filepath = sprintf('%s/build/',filepath)
+  build_filepath = sprintf('%s/build/',filepath);
 
   this_block.setEntityName('fft_nchan_2i_25b_core_ip_struct');
 
@@ -17,7 +17,7 @@ function fft_nchan_2i_25b_core_config(this_block)
   nchan_str = get_param(parent_block, 'nchan');
   nchan_dbl = str2double(nchan_str);
 
-  npoints = 2^nchan_dlb;
+  npoints = 2^nchan_dbl;
   
   this_block.addSimulinkInport('sync');
   this_block.addSimulinkInport('shift');

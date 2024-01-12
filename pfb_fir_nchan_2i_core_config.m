@@ -17,6 +17,8 @@ function pfb_fir_nchan_2i_core_config(this_block)
   nchan_str = get_param(parent_block, 'nchan');
   nchan_dbl = str2double(nchan_str);
 
+  npoints = 2^nchan_dbl;
+
   this_block.addSimulinkInport('sync');
   this_block.addSimulinkInport('pol_in');
 
