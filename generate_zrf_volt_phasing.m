@@ -1,16 +1,22 @@
 function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_bits)
-    % Check:
-    %   - FPGA is an allowed model
-    %   - input file exists
-    %   - output file doesn't exist.
-    % allowed_fpgas = {'xc7z030', 'xc7z035', 'xc7z045'};
+    %Aguments:
+    %   model_name : string : Relative path to the zrf_volt simulink model to mangle.
+    %   fpga_type  : string : FPGA model to compile for i.e xczu49dr-2-effvf1760. 
+    %   nof_channel_bits : int  : log_2(nof channels) where nof_channels = 2^nof_channel_bits
+    %Returns:
+    %   new_model  : string : Updated top model based off of model_name that is ready for compilation.
+
+    allowed_fpgas = {'xczu49dr', 'xczu29dr'};
     if ~exist(model_name, 'file')
         error('Model %s does not exist!', model_name);
+        return;
     end
-    % if ~any(matches(allowed_fpgas, fpga_type))
-    %     allowed_fpgas
-    %     error('FPGA type %s is not allowed.', fpga_type);
-    % end
+    fpga_detail = split(fpga_type,'-');
+    fpga_part = convertStringsToChars(fpga_detail{1});
+    if ~any(matches(allowed_fpgas, fpga_part))
+        error('FPGA type %s is not allowed.', fpga_part);
+        return;
+    end
 
     nof_chan_bits_str = num2str(nof_chan_bits);
     nof_channels = 2^nof_chan_bits;
@@ -28,22 +34,27 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
     fprintf(['Saving build results to: ' build_dir])
     
      %Create DCP slx files FFT:
-    [fft_filepath, fft_name, fft_ext] = fileparts(which('fft_nchan_2i_25b_core.slx'));
+     [fft_filepath, fft_name, fft_ext] = fileparts(which('fft_nchan_2i_25b_core.slx'));
+     new_fft_name = replace(fft_name, 'nchan', sprintf('%sc',nof_channels_str));
+     dcp_fft_builddir = [build_dir new_fft_name];
+     if ~exist(dcp_fft_builddir)
+        mkdir(dcp_fft_builddir);
+     end
     open_system([fft_name fft_ext]);
     set_param([fft_name '/shift'], 'n_bits', nof_chan_bits_str);
     set_param([fft_name '/fft_wideband_real'], 'FFTSize', nof_chan_bits_str);
     xlsetparam([fft_name '/ System Generator'], 'directory', build_dir); %Set the directory for a design checkpoint compile
     xlsetparam([fft_name '/ System Generator'], 'compilation', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
-     %TODO add option to set FPGA part?
+    xlsetparam([fft_name '/ System Generator'], 'xilinxfamily', 'Zynq UltraScale+ RFSoc'); %Set the family
+    xlsetparam([fft_name '/ System Generator'], 'part', fpga_part) %Set the part
 
-    updated_fft_model_filename = [build_dir replace(fft_name, 'nchan', sprintf('%sc',nof_channels_str))];
+    updated_fft_model_filename = [dcp_fft_builddir '/' new_fft_name];
     save_system(fft_name, updated_fft_model_filename); %Save new fft slx - slx name will contain the channel width
     close_system(updated_fft_model_filename);
     if isfile([updated_fft_model_filename '.dcp'])
         fprintf(['Design checkpoint for model ' updated_fft_model_filename ' already appears to exist - not recompiling']);
     else
-        [new_fft_filepath, new_fft_name, new_fft_ext] = fileparts([updated_fft_model_filename fft_ext]);
-        open_system([updated_fft_model_filename new_fft_ext]);
+        open_system([updated_fft_model_filename fft_ext]);
         xsg_result = xlGenerateButton([new_fft_name '/ System Generator']);
         save_system(new_fft_name, updated_fft_model_filename)
         close_system(updated_fft_model_filename);
@@ -52,27 +63,32 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
 
     %Create DCP slx files FIR:
     [fir_filepath, fir_name, fir_ext] = fileparts(which('pfb_fir_nchan_2i_core.slx'));
+    new_fir_name = replace(fir_name, 'nchan', sprintf('%sc',nof_channels_str));
+    dcp_fir_builddir = [build_dir new_fir_name];
+    if ~exist(dcp_fir_builddir)
+        mkdir(dcp_fir_builddir);
+     end
     open_system([fir_name fir_ext]);
     set_param([fir_name '/pfb_fir'], 'PFBSize', nof_chan_bits_str);
     xlsetparam([fir_name '/ System Generator'], 'directory', build_dir); %Set the directory for a design checkpoint compile
     xlsetparam([fir_name '/ System Generator'], 'compilation', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
-     %TODO add option to set FPGA part?
+    xlsetparam([fir_name '/ System Generator'], 'xilinxfamily', 'Zynq UltraScale+ RFSoc'); %Set the family
+    xlsetparam([fir_name '/ System Generator'], 'part', fpga_part) %Set the part
 
-    updated_fir_model_filename = [build_dir replace(fir_name, 'nchan', sprintf('%sc',nof_channels_str))];
+    updated_fir_model_filename = [dcp_fir_builddir '/' new_fir_name];
     save_system(fir_name, updated_fir_model_filename) %Save new fft slx - slx will contain the channel width
     close_system(updated_fir_model_filename);
     if isfile([updated_fir_model_filename '.dcp'])
         fprintf(['Design checkpoint for model ' updated_fir_model_filename ' already appears to exist - not recompiling']);
     else
-        [new_fir_filepath, new_fir_name, new_fir_ext] = fileparts([updated_fir_model_filename fir_ext]);
-        open_system([updated_fir_model_filename new_fir_ext]);
+        open_system([updated_fir_model_filename fir_ext]);
         xsg_result = xlGenerateButton([new_fir_name '/ System Generator']);
         save_system(new_fir_name, updated_fir_model_filename)
         close_system(updated_fir_model_filename);
     end
 
     %Update zrf_volt_phasing model to have correct channel lengths:
-    open_system([name ext])
+    open_system(model_name)
     set_param([name '/const_nchan'], 'const', nof_channels_str)
     set_param([name '/spec_tvg/tvg'], 'nchan_bits', nof_chan_bits_str)
     set_param([name '/spec_tvg/tvg'], 'nchan_bits', nof_chan_bits_str)
@@ -123,15 +139,12 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_type, nof_chan_b
         set_param([name sprintf('/packetizer%d',k)], 'nchan_bits', nof_chan_bits_str);
     end
 
-    new_model = [filepath '/' name '_' fpga_type];
+    new_model = [filepath '/build' '/' name '_' fpga_part];
     if exist([new_model '.slx'], 'file')
         error('Model %s already exists', new_model);
     end
     % Open input model. Change FPGA type and save as new file.
-    % return system name.
-    open_system(model_name);
-    set_param([name '/aa'], 'hw_sys', ['htg_zrf16:' fpga_type]);
-    set_param()
+    set_param([name '/aa'], 'hw_sys', ['htg_zrf16:' fpga_part]);
     save_system(name, new_model);
     close_system(new_model);
 end
