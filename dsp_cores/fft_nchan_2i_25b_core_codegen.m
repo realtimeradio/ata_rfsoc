@@ -4,10 +4,10 @@ function fft_top_filepath = fft_nchan_2i_25b_core_codegen(destination_filepath, 
     "use IEEE.std_logic_1164.all;"
     "library xil_defaultlib;"
     "use xil_defaultlib.conv_pkg.all;"
-    sprintf("entity fft_%d_2i_25b_core_ip_struct is",npoints)
+    sprintf("entity fft_%dc_2i_25b_core_ip_struct is",npoints)
     "  port ("
     "    pol_in : in std_logic_vector( 288-1 downto 0 );"
-    sprintf("    shift : in std_logic_vector( 16-1 downto 0 );"
+    "    shift : in std_logic_vector( 16-1 downto 0 );"
     "    sync : in std_logic_vector( 32-1 downto 0 );"
     "    clk_1 : in std_logic;"
     "    ce_1 : in std_logic;"
@@ -15,7 +15,7 @@ function fft_top_filepath = fft_nchan_2i_25b_core_codegen(destination_filepath, 
     "    overflow : out std_logic_vector( 1-1 downto 0 );"
     "    sync_out : out std_logic_vector( 1-1 downto 0 )"
     "  );"
-    sprintf("end fft_%d_2i_25b_core_ip_struct;",npoints)
+    sprintf("end fft_%dc_2i_25b_core_ip_struct;",npoints)
     ""
     sprintf("architecture structural of fft_%dc_2i_25b_core_ip_struct is",npoints)
     "begin"
@@ -31,7 +31,7 @@ function fft_top_filepath = fft_nchan_2i_25b_core_codegen(destination_filepath, 
     "  );"
     "end structural; "];
 
-    fft_top_filepath = [destination_filepath sprintf('/fft_%d_2i_25b_core_ip_struct.vhd',npoints)];
+    fft_top_filepath = [destination_filepath sprintf('/fft_%dc_2i_25b_core_ip_struct.vhd',npoints)];
     fileopn = fopen(fft_top_filepath,'w');
     if(fileopn == -1)
         error("Cannot write out temporary HDL file")

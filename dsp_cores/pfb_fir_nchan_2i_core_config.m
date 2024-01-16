@@ -3,10 +3,8 @@ function pfb_fir_nchan_2i_core_config(this_block)
 
   this_block.setTopLevelLanguage('VHDL');
 
-  filepath = fileparts(which('pfb_fir_nchan_2i_core_config'));
-  build_filepath = sprintf('%s/build/',filepath);
+  build_path = fileparts(which(bdroot)); % path to the host model
 
-  this_block.setEntityName('pfb_fir_nchan_2i_core_ip_struct');
 
   % System Generator has to assume that your entity  has a combinational feed through; 
   %   if it  doesn't, then comment out the following line:
@@ -19,6 +17,7 @@ function pfb_fir_nchan_2i_core_config(this_block)
   nfft_bits = maskvals('nfft_bits');
   nfft = 2^nfft_bits; 
 
+  this_block.setEntityName(sprintf('pfb_fir_%dc_2i_core_ip_struct', nfft/2));
   this_block.addSimulinkInport('sync');
   this_block.addSimulinkInport('pol_in');
 
@@ -69,7 +68,7 @@ function pfb_fir_nchan_2i_core_config(this_block)
   %    this_block.addFile('');
   %    this_block.addFile('');
 
-  generated_vhd_file = pfb_fir_nchan_2i_core_codegen(build_filepath, nfft);
+  generated_vhd_file = pfb_fir_nchan_2i_core_codegen(build_path, nfft);
   this_block.addFile(generated_vhd_file);
 return;
 

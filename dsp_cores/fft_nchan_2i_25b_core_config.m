@@ -3,10 +3,8 @@ function fft_nchan_2i_25b_core_config(this_block)
 
   this_block.setTopLevelLanguage('VHDL');
 
-  filepath = fileparts(which('fft_nchan_2i_25b_core_config'));
-  build_filepath = sprintf('%s/build/',filepath);
+  build_path = fileparts(which(bdroot)); % Path to host slx file
 
-  this_block.setEntityName('fft_nchan_2i_25b_core_ip_struct');
 
   % System Generator has to assume that your entity  has a combinational feed through; 
   %   if it  doesn't, then comment out the following line:
@@ -18,7 +16,9 @@ function fft_nchan_2i_25b_core_config(this_block)
   maskvals = containers.Map({x.Name}', {x.Value}');
   nfft_bits = maskvals('nfft_bits');
   nfft = 2^nfft_bits;
+
   
+  this_block.setEntityName(sprintf('fft_%dc_2i_25b_core_ip_struct', nfft / 2));
   this_block.addSimulinkInport('sync');
   this_block.addSimulinkInport('shift');
   this_block.addSimulinkInport('pol_in');
@@ -78,7 +78,7 @@ function fft_nchan_2i_25b_core_config(this_block)
 
   %    this_block.addFile('');
   %    this_block.addFile('');
-  generated_vhd_file = fft_nchan_2i_25b_core_codegen(build_filepath, nfft);
+  generated_vhd_file = fft_nchan_2i_25b_core_codegen(build_path, nfft);
   this_block.addFile(generated_vhd_file);
 
 return;
