@@ -31,8 +31,13 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     %Create build directory in the same location as the model to be edited.
     [filepath, name, ext] = fileparts(which(model_name));
     updated_model_name = replace(name, 'nchan', sprintf('%sc',nof_channels_str));
-
     build_dir = [filepath '/build' '/' updated_model_name '/'];
+
+    new_model = [build_dir '/' updated_model_name '_' fpga_part];
+    disp(['New top-level model will be created at:' new_model]);
+    if exist([new_model '.slx'], 'file')
+        error('Model %s already exists', new_model);
+    end
 
     if ~exist(build_dir, 'dir')
         mkdir(build_dir)
@@ -129,13 +134,10 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
         set_param([name sprintf('/chan_reorder%d',j)], 'nchan_bits', nof_chan_bits_str);
         set_param([name sprintf('/chan_reorder%d',j)], 'ntime_bits', nof_time_bits_str);
 	% Manually change deep buffer to URAM
-        set_param([name sprintf('/chan_reorder%d/reorder/buf0',j)], 'distributed_mem', 'UltraRAM');
+        set_param([name sprintf('/chan_reorder%d/reorder/buf0',j)], 'distributed_mem', 'Ultra RAM');
     end
 
     %Set nchan parameter throughout packetizers:
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %JACK is this enough for the packetizer blocks?
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     nof_packetizers = 2;
     for k=0:nof_packetizers-1
         set_param([name sprintf('/packetizer%d',k)], 'nchan_bits', nof_chan_bits_str);
@@ -145,10 +147,6 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     set_param([name '/aa'], 'hw_sys', ['htg_zrf16:' fpga_part]);
 
     % Save as new file
-    new_model = [filepath '/build' '/' name '_' fpga_part];
-    if exist([new_model '.slx'], 'file')
-        error('Model %s already exists', new_model);
-    end
     save_system(name, new_model);
     close_system(new_model);
 end
