@@ -101,9 +101,6 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     set_param([name '/corr'], 'n_chan_bits', nof_chan_bits_str)
     set_param([name '/vacc_ss'], 'n_chan_bits', nof_chan_bits_str)
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %JACK This is where we update DCP blocks to point to correct locations - UNTESTED AS CANNOT GENERATE DCP FILES
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     fft_dcp_file = [updated_fft_model_filename '.dcp'];
     if exist(fft_dcp_file)
         set_param([name '/dcp_fft'], 'dcp_file', sprintf('''%s''', fft_dcp_file));
@@ -120,36 +117,19 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     %Set nchan parameter throughout pipelines:
     nof_pipelines = 8;
     for i=0:nof_pipelines-1
-        set_param([name sprintf('/pipeline%d/pfb/FIR',i)], 'nchan', nof_chan_bits_str);
-        set_param([name sprintf('/pipeline%d/pfb/FFT',i)], 'nchan', nof_chan_bits_str);
-        set_param([name sprintf('/pipeline%d/phase_rotate/fd0',i)], 'n_bit_chans', nof_chan_bits_str);
-        set_param([name sprintf('/pipeline%d/phase_rotate/fd1',i)], 'n_bit_chans', nof_chan_bits_str);
-        eq_pol = num2str(nof_chan_bits-2);
-        set_param([name sprintf('/pipeline%d/eq/pol0',i)], 'nchan', eq_pol);
-        set_param([name sprintf('/pipeline%d/eq/pol1',i)], 'nchan', eq_pol);
-        addr_width = num2str(ceil(log2(2^(nof_chan_bits-2))));
-        set_param([name sprintf('/pipeline%d/eqtvg/pol0/tv',i)], 'addr_width', addr_width);
-        set_param([name sprintf('/pipeline%d/eqtvg/pol1/tv',i)], 'addr_width', addr_width);
+        set_param([name sprintf('/pipeline%d',i)], 'nchan_bits', nof_chan_bits_str);
     end
 
     %Set nchan parameter throughout chan_reorders:
     nof_chan_reorders = 2;
+    nof_time_bits = 4;% Always make 16 time samples. % + (11 - nof_chan_bits); % 2^? Number of time samples reordered
+    nof_time_bits_str = num2str(nof_time_bits);
+    reorder_data_width = 512; % Width of data bus
     for j=0:nof_chan_reorders-1
-        reorder_data_width = nof_channels/4;
-        chan_output_order = reshape(permute(reshape([0:(reorder_data_width)*16 - 1], (reorder_data_width), 16), [2,1]), (reorder_data_width)*16, 1);
-        set_param([name sprintf('/chan_reorder%d/reorder2',j)], 'map', num2str(chan_output_order));
-        set_param([name sprintf('/chan_reorder%d/reorder2',j)], 'n_bits', num2str(reorder_data_width));
-        reorder_width_bits = nof_chan_bits+2;
-        reorder_width = 2^(reorder_width_bits);
-        set_param([name sprintf('/chan_reorder%d/reorder2/reorder_ram',j)], 'depth', num2str(reorder_width));
-        set_param([name sprintf('/chan_reorder%d/reorder2/current_map',j)], 'n_bits', num2str(reorder_width_bits));
-        set_param([name sprintf('/chan_reorder%d/reorder2/current_map',j)], 'init_vector', sprintf('[0:%d]''',reorder_width));
-        set_param([name sprintf('/chan_reorder%d/reorder2/map_mod',j)], 'depth', num2str(reorder_width));
-        set_param([name sprintf('/chan_reorder%d/reorder2/addr_expand',j)], 'outputWidth', num2str(reorder_width_bits));
-        set_param([name sprintf('/chan_reorder%d/reorder2/current_map',j)], 'depth', num2str(reorder_width));
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %JACK MIGHT NEED TO DO SOMETHING TO THE transpose_t_c BLOCK and square_transposer...
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        set_param([name sprintf('/chan_reorder%d',j)], 'nchan_bits', nof_chan_bits_str);
+        set_param([name sprintf('/chan_reorder%d',j)], 'ntime_bits', nof_time_bits_str);
+	% Manually change deep buffer to URAM
+        set_param([name sprintf('/chan_reorder%d/reorder/buf0',j)], 'distributed_mem', 'UltraRAM');
     end
 
     %Set nchan parameter throughout packetizers:
@@ -161,12 +141,14 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
         set_param([name sprintf('/packetizer%d',k)], 'nchan_bits', nof_chan_bits_str);
     end
 
+    % Change FPGA type
+    set_param([name '/aa'], 'hw_sys', ['htg_zrf16:' fpga_part]);
+
+    % Save as new file
     new_model = [filepath '/build' '/' name '_' fpga_part];
     if exist([new_model '.slx'], 'file')
         error('Model %s already exists', new_model);
     end
-    % Open input model. Change FPGA type and save as new file.
-    set_param([name '/aa'], 'hw_sys', ['htg_zrf16:' fpga_part]);
     save_system(name, new_model);
     close_system(new_model);
 end
