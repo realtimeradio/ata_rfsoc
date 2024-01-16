@@ -1,4 +1,4 @@
-function fft_top_filepath = fft_nchan_2i_25b_corr_codegen(destination_filepath, npoints)
+function fft_top_filepath = fft_nchan_2i_25b_core_codegen(destination_filepath, npoints)
     %Here npoints is expected to be the number of points, not the power of 2 number of points
     template = ["library IEEE;"
     "use IEEE.std_logic_1164.all;"
@@ -7,7 +7,7 @@ function fft_top_filepath = fft_nchan_2i_25b_corr_codegen(destination_filepath, 
     sprintf("entity fft_%d_2i_25b_core_ip_struct is",npoints)
     "  port ("
     "    pol_in : in std_logic_vector( 288-1 downto 0 );"
-    sprintf("    shift : in std_logic_vector( %d -1 downto 0 );",npoints)
+    sprintf("    shift : in std_logic_vector( 16-1 downto 0 );"
     "    sync : in std_logic_vector( 32-1 downto 0 );"
     "    clk_1 : in std_logic;"
     "    ce_1 : in std_logic;"

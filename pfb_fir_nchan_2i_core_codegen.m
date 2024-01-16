@@ -1,4 +1,4 @@
-function pfb_top_filepath = pfb_fir_nchan_2i_corr_codegen(destination_filepath, npoints)
+function pfb_top_filepath = pfb_fir_nchan_2i_core_codegen(destination_filepath, npoints)
     %Here npoints is expected to be the number of points, not the power of 2 number of points
     template = ["library IEEE;"
     "use IEEE.std_logic_1164.all;"
