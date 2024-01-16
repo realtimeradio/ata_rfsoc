@@ -41,8 +41,8 @@ function fft_nchan_2i_25b_core_config(this_block)
     if (this_block.port('pol_in').width ~= 18*16);
       this_block.setError('Input data type for port "pol_in" must have width=18*16.');
     end
-    if (this_block.port('shift').width ~= nchan_dbl);
-      this_block.setError(sprintf('Input data type for port "shift" must have width=%s.',nchan_str));
+    if (this_block.port('shift').width ~= 16);
+      this_block.setError('Input data type for port "shift" must have width=16.');
     end
 
     if (this_block.port('sync').width ~= 32);
