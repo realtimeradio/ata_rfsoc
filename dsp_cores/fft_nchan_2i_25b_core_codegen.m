@@ -18,6 +18,17 @@ function fft_top_filepath = fft_nchan_2i_25b_core_codegen(destination_filepath, 
     sprintf("end fft_%dc_2i_25b_core_ip_struct;",nchans)
     ""
     sprintf("architecture structural of fft_%dc_2i_25b_core_ip_struct is",nchans)
+    sprintf("  component fft_%dc_2i_25b_core is",nchans)
+    "    port ("
+    "      pol_in : in std_logic_vector( 288-1 downto 0 );"
+    "      shift : in std_logic_vector( 16-1 downto 0 );"
+    "      sync : in std_logic_vector( 32-1 downto 0 );"
+    "      clk : in std_logic;"
+    "      pol_out : out std_logic_vector( 400-1 downto 0 );"
+    "      overflow : out std_logic_vector( 1-1 downto 0 );"
+    "      sync_out : out std_logic_vector( 1-1 downto 0 )"
+    "    );"
+    "  end component;"
     "begin"
     sprintf("  fft_%dc_2i_25b_core_ip_inst : entity fft_%dc_2i_25b_core",nchans,nchans)
     "  port map ("

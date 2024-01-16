@@ -16,6 +16,15 @@ function pfb_top_filepath = pfb_fir_nchan_2i_core_codegen(destination_filepath, 
     sprintf("end pfb_fir_%dc_2i_core_ip_struct;",nchans)
     ""
     sprintf("architecture structural of pfb_fir_%dc_2i_core_ip_struct is",nchans)
+    sprintf("  component pfb_fir_%dc_2i_core is",nchans)
+    "    port ("
+    "      pol_in : in std_logic_vector( 256-1 downto 0 );"
+    "      pol_out : out std_logic_vector( 288-1 downto 0 );"
+    "      sync : in std_logic_vector( 32-1 downto 0 );"
+    "      sync_out : out std_logic_vector( 1-1 downto 0 );"
+    "      clk : in std_logic"
+    "    );"
+    "  end component"
     "begin"
     sprintf("  pfb_fir_%dc_2i_core_ip_inst : entity pfb_fir_%dc_2i_core",nchans,nchans)
     "  port map ("
