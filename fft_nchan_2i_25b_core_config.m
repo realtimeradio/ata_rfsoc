@@ -78,7 +78,7 @@ function fft_nchan_2i_25b_core_config(this_block)
 
   %    this_block.addFile('');
   %    this_block.addFile('');
-  generated_vhd_file = fft_nchan_2i_25b_corr_codegen(build_filepath, npoints);
+  generated_vhd_file = fft_nchan_2i_25b_core_codegen(build_filepath, npoints);
   this_block.addFile(generated_vhd_file);
 
 return;

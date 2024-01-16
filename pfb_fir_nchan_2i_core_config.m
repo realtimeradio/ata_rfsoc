@@ -69,7 +69,7 @@ function pfb_fir_nchan_2i_core_config(this_block)
   %    this_block.addFile('');
   %    this_block.addFile('');
 
-  generated_vhd_file = pfb_fir_nchan_2i_corr_codegen(build_filepath, npoints);
+  generated_vhd_file = pfb_fir_nchan_2i_core_codegen(build_filepath, npoints);
   this_block.addFile(generated_vhd_file);
 return;
 
