@@ -26,7 +26,7 @@ function pfb_top_filepath = pfb_fir_nchan_2i_core_codegen(destination_filepath, 
     "    );"
     "  end component"
     "begin"
-    sprintf("  pfb_fir_%dc_2i_core_ip_inst : entity pfb_fir_%dc_2i_core",nchans,nchans)
+    sprintf("  pfb_fir_%dc_2i_core_ip_inst : pfb_fir_%dc_2i_core",nchans,nchans)
     "  port map ("
     "    pol_in => pol_in,"
     "    pol_out => pol_out,"

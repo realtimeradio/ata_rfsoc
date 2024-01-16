@@ -30,7 +30,7 @@ function fft_top_filepath = fft_nchan_2i_25b_core_codegen(destination_filepath, 
     "    );"
     "  end component;"
     "begin"
-    sprintf("  fft_%dc_2i_25b_core_ip_inst : entity fft_%dc_2i_25b_core",nchans,nchans)
+    sprintf("  fft_%dc_2i_25b_core_ip_inst : fft_%dc_2i_25b_core",nchans,nchans)
     "  port map ("
     "    pol_in => pol_in, "
     "    shift    => shift   , "
