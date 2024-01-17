@@ -57,7 +57,6 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
         disp(['Design checkpoint for model ' updated_fft_model_filename ' already appears to exist - not recompiling']);
     else
         open_system([fft_name fft_ext]);
-        set_param([fft_name '/shift'], 'n_bits', nof_fft_points_bits_str);
         set_param([fft_name '/fft_wideband_real'], 'FFTSize', nof_fft_points_bits_str);
         xlsetparam([fft_name '/ System Generator'], 'directory', dcp_fft_builddir); %Set the directory for a design checkpoint compile
         xlsetparam([fft_name '/ System Generator'], 'compilation', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
