@@ -9,7 +9,7 @@ function pfb_multires_2i_core_config(this_block)
 
   parent_block = get_param(this_block.blockName,'Parent');
 
-  this_block.setEntityName('pfb_fir_nchan_2i_core_ip_struct')
+  this_block.setEntityName('pfb_multires_2i_core_ip_struct')
   this_block.addSimulinkInport('sync');
   this_block.addSimulinkInport('nchan_bits');
   this_block.addSimulinkInport('pol_in');
@@ -70,7 +70,7 @@ function pfb_multires_2i_core_config(this_block)
   %    this_block.addFile('');
   %    this_block.addFile('');
 
-  this_block.addFile('pfb_fir_nchan_2i_core_ip_struct.vhd');
+  this_block.addFile('dsp_cores/pfb_multires_2i_core_ip_struct.vhd');
 return;
 
 
