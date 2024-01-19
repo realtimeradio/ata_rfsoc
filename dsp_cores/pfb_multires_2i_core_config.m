@@ -35,7 +35,7 @@ function pfb_multires_2i_core_config(this_block)
       this_block.setError('Input data type for port "sync" must have width=1.');
     end
 
-    if (this_block.port('nchan_bits').width ~= 3);
+    if (this_block.port('nchan_bits').width ~= 2);
       this_block.setError('Input data type for port "pol_in" must have width=3.');
     end
 
