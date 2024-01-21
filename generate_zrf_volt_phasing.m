@@ -133,7 +133,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
         set_param([name sprintf('/chan_reorder%d',j)], 'nchan_bits', nof_chan_bits_str);
         set_param([name sprintf('/chan_reorder%d',j)], 'ntime_bits', nof_time_bits_str);
 	% Manually change deep buffer to URAM
-        set_param([name sprintf('/chan_reorder%d/reorder/buf0',j)], 'distributed_mem', 'Ultra RAM');
+        set_param([name sprintf('/chan_reorder%d/reorder2/buf0',j)], 'distributed_mem', 'Ultra RAM');
     end
 
     %Set nchan parameter throughout packetizers:
