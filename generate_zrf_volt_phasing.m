@@ -33,8 +33,8 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     updated_model_name = replace(name, 'nchan', sprintf('%sc',nof_channels_str));
     build_dir = [filepath '/build' '/' updated_model_name '/'];
 
-    new_model = [build_dir '/' updated_model_name '_' fpga_part];
-    disp(['New top-level model will be created at:' new_model]);
+    new_model = [build_dir updated_model_name '_' fpga_part];
+    disp(['New top-level model will be created at: ' new_model]);
     if exist([new_model '.slx'], 'file')
         error('Model %s already exists', new_model);
     end
@@ -125,8 +125,15 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     end
 
     %Set nchan parameter throughout chan_reorders:
+    if nof_chan_bits > 11
+        error('Channel numbers > 2^11 not supported!');
+    end
     nof_chan_reorders = 2;
-    nof_time_bits = 4;% Always make 16 time samples. % + (11 - nof_chan_bits); % 2^? Number of time samples reordered
+    nof_time_bits = 4 + (11 - nof_chan_bits); % 2^? Number of time samples reordered
+    % Aim for 1-channel packetizer granularity, but set a maximum when number of times
+    % is small
+    pkt_step_granularity_bits = max(nof_time_bits-4, 4); 
+    pkt_step_granularity_bits_str = num2str(pkt_step_granularity_bits);
     nof_time_bits_str = num2str(nof_time_bits);
     reorder_data_width = 512; % Width of data bus
     for j=0:nof_chan_reorders-1
@@ -140,6 +147,9 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     nof_packetizers = 2;
     for k=0:nof_packetizers-1
         set_param([name sprintf('/packetizer%d',k)], 'nchan_bits', nof_chan_bits_str);
+        set_param([name sprintf('/packetizer%d',k)], 'npol_bits', [nof_time_bits_str '+1 + 2']);
+        set_param([name sprintf('/packetizer%d',k)], 'step_bits', pkt_step_granularity_bits_str);
+        set_param([name sprintf('/packetizer%d',k)], 'time_step_bits', nof_time_bits_str);
     end
 
     % Change FPGA type
