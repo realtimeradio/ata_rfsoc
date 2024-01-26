@@ -141,6 +141,8 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
         set_param([name sprintf('/chan_reorder%d',j)], 'ntime_bits', nof_time_bits_str);
 	% Manually change deep buffer to URAM
         set_param([name sprintf('/chan_reorder%d/reorder2/buf0',j)], 'distributed_mem', 'Ultra RAM');
+	% Manually changed shared bram to 16-bit wide
+        set_param([name sprintf('/chan_reorder%d/reorder2/map',j)], 'data_width', '16');
     end
 
     %Set nchan parameter throughout packetizers:
@@ -157,5 +159,8 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
 
     % Save as new file
     save_system(name, new_model);
+    % update RFDC block to get gateway names correct after model rename
+    rfdc_mask([bdroot '/rfdc'], 1);
+    save_system();
     close_system(new_model);
 end
