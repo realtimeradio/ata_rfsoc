@@ -132,7 +132,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     nof_time_bits = 4 + (11 - nof_chan_bits); % 2^? Number of time samples reordered
     % Aim for 1-channel packetizer granularity, but set a maximum when number of times
     % is small
-    pkt_step_granularity_bits = max(nof_time_bits-4, 4); 
+    pkt_step_granularity_bits = max(nof_time_bits-4, 5); 
     pkt_step_granularity_bits_str = num2str(pkt_step_granularity_bits);
     nof_time_bits_str = num2str(nof_time_bits);
     reorder_data_width = 512; % Width of data bus
