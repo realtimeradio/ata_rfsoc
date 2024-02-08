@@ -139,6 +139,16 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     for j=0:nof_chan_reorders-1
         set_param([name sprintf('/chan_reorder%d',j)], 'nchan_bits', nof_chan_bits_str);
         set_param([name sprintf('/chan_reorder%d',j)], 'ntime_bits', nof_time_bits_str);
+        % If 2048 channels or more, use the 16-chan granularity reorder
+        if nof_chan_bits >= 11
+            set_param([name sprintf('/chan_reorder%d/single_chan_reorder',j) ], 'Commented', 'on');
+            set_param([name sprintf('/chan_reorder%d/sixteen_chan_reorder',j)], 'Commented', 'off');
+            set_param([name sprintf('/chan_reorder%d/transpose_t_c',j)], 'Commented', 'off');
+            delete_line([name sprintf('/chan_reorder%d',j)], 'single_chan_reorder/1', 'reorder2/1');
+            delete_line([name sprintf('/chan_reorder%d',j)], 'single_chan_reorder/2', 'reorder2/3');
+            add_line([name sprintf('/chan_reorder%d',j)], 'sixteen_chan_reorder/1', 'reorder2/1');
+            add_line([name sprintf('/chan_reorder%d',j)], 'sixteen_chan_reorder/2', 'reorder2/3');
+        end
     end
 
     %Set nchan parameter throughout packetizers:
