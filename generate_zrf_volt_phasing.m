@@ -139,10 +139,6 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     for j=0:nof_chan_reorders-1
         set_param([name sprintf('/chan_reorder%d',j)], 'nchan_bits', nof_chan_bits_str);
         set_param([name sprintf('/chan_reorder%d',j)], 'ntime_bits', nof_time_bits_str);
-	% Manually change deep buffer to URAM
-        set_param([name sprintf('/chan_reorder%d/reorder2/buf0',j)], 'distributed_mem', 'Ultra RAM');
-	% Manually changed shared bram to 16-bit wide
-        set_param([name sprintf('/chan_reorder%d/reorder2/map',j)], 'data_width', '16');
     end
 
     %Set nchan parameter throughout packetizers:
@@ -152,6 +148,16 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
         set_param([name sprintf('/packetizer%d',k)], 'npol_bits', [nof_time_bits_str '+1 + 2']);
         set_param([name sprintf('/packetizer%d',k)], 'step_bits', pkt_step_granularity_bits_str);
         set_param([name sprintf('/packetizer%d',k)], 'time_step_bits', nof_time_bits_str);
+    end
+    
+    % Update model before making tweaks
+    set_param(name, 'SimulationCommand', 'update');
+    
+    for j=0:nof_chan_reorders-1
+        % Manually change deep buffer to URAM
+        set_param([name sprintf('/chan_reorder%d/reorder2/buf0',j)], 'distributed_mem', 'Ultra RAM');
+	    % Manually changed shared bram to 16-bit wide
+        set_param([name sprintf('/chan_reorder%d/reorder2/map',j)], 'data_width', '16');
     end
 
     % Change FPGA type
