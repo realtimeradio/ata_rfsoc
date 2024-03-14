@@ -13,10 +13,10 @@ function build_zrf_volt_phasing(model_name, fpga_part, nof_chan_bits, nof_fir_ta
         fpga_part string;
     end
     arguments 
-        nof_chan_bits int;
+        nof_chan_bits double;
     end
     arguments 
-        nof_fir_taps int = 4;     
+        nof_fir_taps double = 4;     
     end
     model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_bits, nof_fir_taps);
     t0 = datetime;
