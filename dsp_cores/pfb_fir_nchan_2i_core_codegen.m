@@ -1,10 +1,10 @@
-function pfb_top_filepath = pfb_fir_nchan_2i_core_codegen(destination_filepath, nchans)
+function pfb_top_filepath = pfb_fir_nchan_2i_core_codegen(destination_filepath, nchans, ntaps)
     %Here nchans is expected to be the number of channels, not the power of 2 number of channels
     template = ["library IEEE;"
     "use IEEE.std_logic_1164.all;"
     "library xil_defaultlib;"
     "use xil_defaultlib.conv_pkg.all;"
-    sprintf("entity pfb_fir_%dc_2i_core_ip_struct is",nchans)
+    sprintf("entity pfb_fir_%dc_%dt_2i_core_ip_struct is",nchans, ntaps)
     "  port ("
     "    pol_in : in std_logic_vector( 256-1 downto 0 );"
     "    pol_out : out std_logic_vector( 288-1 downto 0 );"
@@ -13,10 +13,10 @@ function pfb_top_filepath = pfb_fir_nchan_2i_core_codegen(destination_filepath, 
     "    clk_1 : in std_logic;"
     "    ce_1 : in std_logic"
     "  );"
-    sprintf("end pfb_fir_%dc_2i_core_ip_struct;",nchans)
+    sprintf("end pfb_fir_%dc_%dt_2i_core_ip_struct;",nchans,ntaps)
     ""
-    sprintf("architecture structural of pfb_fir_%dc_2i_core_ip_struct is",nchans)
-    sprintf("  component pfb_fir_%dc_2i_core is",nchans)
+    sprintf("architecture structural of pfb_fir_%dc_%dt_2i_core_ip_struct is",nchans,ntaps)
+    sprintf("  component pfb_fir_%dc_%dt_2i_core is",nchans,ntaps)
     "    port ("
     "      pol_in : in std_logic_vector( 256-1 downto 0 );"
     "      pol_out : out std_logic_vector( 288-1 downto 0 );"
@@ -26,7 +26,7 @@ function pfb_top_filepath = pfb_fir_nchan_2i_core_codegen(destination_filepath, 
     "    );"
     "  end component;"
     "begin"
-    sprintf("  pfb_fir_%dc_2i_core_ip_inst : pfb_fir_%dc_2i_core",nchans,nchans)
+    sprintf("  pfb_fir_%dc_%dt_2i_core_ip_inst : pfb_fir_%dc_%dt_2i_core",nchans,ntaps,nchans,ntaps)
     "  port map ("
     "    pol_in => pol_in,"
     "    pol_out => pol_out,"
@@ -36,7 +36,7 @@ function pfb_top_filepath = pfb_fir_nchan_2i_core_codegen(destination_filepath, 
     "  );"
     "end structural;"];
 
-    pfb_top_filepath = [destination_filepath sprintf('/pfb_fir_%dc_2i_core_ip_struct.vhd',nchans)];
+    pfb_top_filepath = [destination_filepath sprintf('/pfb_fir_%dc_%dt_2i_core_ip_struct.vhd',nchans,ntaps)];
     fileopn = fopen(pfb_top_filepath,'w');
     if(fileopn == -1)
         error("Cannot write out temporary HDL file: %s", pfb_top_filepath)
