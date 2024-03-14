@@ -16,8 +16,9 @@ function pfb_fir_nchan_2i_core_config(this_block)
   maskvals = containers.Map({x.Name}', {x.Value}');
   nfft_bits = maskvals('nfft_bits');
   nfft = 2^nfft_bits; 
+  nof_taps = maskvals('TotalTaps');
 
-  this_block.setEntityName(sprintf('pfb_fir_%dc_2i_core_ip_struct', nfft/2));
+  this_block.setEntityName(sprintf('pfb_fir_%dc_%dt_2i_core_ip_struct', nfft/2, nof_taps));
   this_block.addSimulinkInport('sync');
   this_block.addSimulinkInport('pol_in');
 
@@ -68,7 +69,7 @@ function pfb_fir_nchan_2i_core_config(this_block)
   %    this_block.addFile('');
   %    this_block.addFile('');
 
-  generated_vhd_file = pfb_fir_nchan_2i_core_codegen(build_path, nfft/2);
+  generated_vhd_file = pfb_fir_nchan_2i_core_codegen(build_path, nfft/2,nof_taps);
   this_block.addFile(generated_vhd_file);
 return;
 
