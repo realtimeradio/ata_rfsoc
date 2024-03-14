@@ -1,9 +1,10 @@
-function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_bits)
+function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_bits, nof_fir_taps)
     %Aguments:
     %   model_name : string : Relative path to the zrf_volt simulink model to mangle.
     %                         The string "nchan" in this name will be replaced by the actual number of channels.
     %   fpga_part  : string : FPGA model to compile for xczu49dr or xczu29dr
     %   nof_chan_bits : int : Set number of output channels. Number of output frequency channels = 2^nof_chan_bits
+    %   nof_fir_taps : int  : Set number of FIR taps for the PFB filter.
     %Returns:
     %   new_model  : string : Updated top model based off of model_name that is ready for compilation.
 
@@ -27,6 +28,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     nof_fft_points_bits = nof_chan_bits + 1;
     nof_fft_points = 2^nof_fft_points_bits;
     nof_fft_points_bits_str = num2str(nof_fft_points_bits);
+    nof_fir_taps_str = num2str(nof_fir_taps);
 
     %Create build directory in the same location as the model to be edited.
     [filepath, name, ext] = fileparts(which(model_name));
@@ -72,8 +74,9 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     
 
     %Create DCP slx files FIR:
-    [fir_filepath, fir_name, fir_ext] = fileparts(which('pfb_fir_nchan_2i_core.slx'));
+    [fir_filepath, fir_name, fir_ext] = fileparts(which('pfb_fir_nchan_ntaps_2i_core.slx'));
     new_fir_name = replace(fir_name, 'nchan', sprintf('%sc',nof_channels_str));
+    new_fir_name = replace(new_fir_name, 'ntaps', sprintf('%st',nof_fir_taps_str));
     dcp_fir_builddir = [build_dir new_fir_name];
     updated_fir_model_filename = [dcp_fir_builddir '/' new_fir_name];
     disp(['Building FIR to: ' dcp_fir_builddir])
@@ -85,6 +88,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     else
         open_system([fir_name fir_ext]);
         set_param([fir_name '/pfb_fir'], 'PFBSize', nof_fft_points_bits_str);
+        set_param([fir_name '/pfb_fir'], 'TotalTaps', nof_fir_taps_str);
         xlsetparam([fir_name '/ System Generator'], 'directory', dcp_fir_builddir); %Set the directory for a design checkpoint compile
         xlsetparam([fir_name '/ System Generator'], 'compilation', 'Synthesized Checkpoint'); %Set the directory for a design checkpoint compile
         xlsetparam([fir_name '/ System Generator'], 'xilinxfamily', 'Zynq UltraScale+ RFSoc'); %Set the family
