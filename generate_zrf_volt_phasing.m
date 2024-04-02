@@ -33,6 +33,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     %Create build directory in the same location as the model to be edited.
     [filepath, name, ext] = fileparts(which(model_name));
     updated_model_name = replace(name, 'nchan', sprintf('%sc',nof_channels_str));
+    updated_model_name = replace(updated_model_name, 'ntaps', sprintf('%st',nof_fir_taps_str));
     build_dir = [filepath '/build' '/' updated_model_name '/'];
 
     new_model = [build_dir updated_model_name '_' fpga_part];
