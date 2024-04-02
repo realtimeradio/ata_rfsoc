@@ -120,7 +120,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     if exist(fir_dcp_file)
         set_param([name '/dcp_fir'], 'dcp_file', sprintf('''%s''', fir_dcp_file));
     else
-        error('FFT dcp file: %s does not exist', fir_dcp_file);
+        error('FIR dcp file: %s does not exist', fir_dcp_file);
     end
 
     %Set nchan parameter throughout pipelines:
