@@ -127,6 +127,7 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     nof_pipelines = 8;
     for i=0:nof_pipelines-1
         set_param([name sprintf('/pipeline%d',i)], 'nchan_bits', nof_chan_bits_str);
+        set_param([name sprintf('/pipeline%d/pfb/FIR',i)], 'TotalTaps', nof_fir_taps_str);
     end
 
     %Set nchan parameter throughout chan_reorders:
