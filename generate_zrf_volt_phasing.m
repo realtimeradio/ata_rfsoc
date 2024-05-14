@@ -106,7 +106,6 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     open_system(model_name)
     set_param([name '/const_nchan'], 'const', nof_channels_str)
     set_param([name '/spec_tvg/tvg'], 'nchan_bits', nof_chan_bits_str)
-    set_param([name '/spec_tvg/tvg'], 'nchan_bits', nof_chan_bits_str)
     set_param([name '/corr'], 'n_chan_bits', nof_chan_bits_str)
     set_param([name '/vacc_ss'], 'n_chan_bits', nof_chan_bits_str)
 
@@ -185,4 +184,5 @@ function new_model = generate_zrf_volt_phasing(model_name, fpga_part, nof_chan_b
     rfdc_mask([bdroot '/rfdc'], 1);
     save_system();
     close_system(new_model);
+    close_system(model_name);
 end
